@@ -1,5 +1,4 @@
-import pytest
-from app.models.employee import Employee
+from app.models import Employee
 
 
 def test_create_employee(db_session):
