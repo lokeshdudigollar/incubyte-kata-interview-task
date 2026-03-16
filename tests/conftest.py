@@ -1,10 +1,8 @@
 import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from app.config import TEST_DATABASE_URL
 from app.database.base import Base
-
-# Use an in-memory SQLite for testing
-TEST_DATABASE_URL = "sqlite:///:memory:"
 
 @pytest.fixture
 def db_session():
