@@ -7,7 +7,11 @@ class SalaryMetricsService:
         self.repo = repo
 
     def get_metrics_by_country(self, country: str):
-        min_salary, max_salary, avg_salary = self.repo.get_salary_metrics_by_country(country)
+        result = self.repo.get_salary_metrics_by_country(country)
+        if result:
+            min_salary, max_salary, avg_salary = result
+        else:
+            min_salary = max_salary = avg_salary = None
 
         return SalaryMetricsByCountryResponse(
             country=country,
