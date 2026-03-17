@@ -5,7 +5,7 @@ from app.config import TEST_DATABASE_URL_FILE_BASED
 from app.database.base import Base
 from fastapi.testclient import TestClient
 from app.main import app
-from app.routes.employee_routes import get_db
+from app.dependencies import get_db
 
 @pytest.fixture
 def db_session():
