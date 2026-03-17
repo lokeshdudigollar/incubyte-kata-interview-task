@@ -1,3 +1,4 @@
+from fastapi import HTTPException
 from app.repositories.employee_repository import EmployeeRepository
 
 
@@ -13,3 +14,11 @@ class EmployeeService:
             country=country,
             salary=salary
         )
+    
+    def get_employee(self, employee_id: int):
+        employee = self.repo.get_employee(employee_id)
+
+        if not employee:
+            raise HTTPException(status_code=404, detail="Employee not found")
+
+        return employee
