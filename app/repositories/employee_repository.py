@@ -42,6 +42,17 @@ class EmployeeRepository:
 
         return employee
     
+    def delete_employee(self, employee_id: int):
+        employee = self.get_employee(employee_id)
+
+        if not employee:
+            return False
+
+        self.db.delete(employee)
+        self.db.commit()
+
+        return True
+    
     def get_salary_metrics_by_country(self, country: str):
         return (
             self.db.query(

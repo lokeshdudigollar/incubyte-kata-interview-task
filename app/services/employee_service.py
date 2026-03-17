@@ -30,3 +30,9 @@ class EmployeeService:
             raise HTTPException(status_code=404, detail="Employee not found")
 
         return employee
+
+    def delete_employee(self, employee_id: int):
+        deleted = self.repo.delete_employee(employee_id)
+
+        if not deleted:
+            raise HTTPException(status_code=404, detail="Employee not found")

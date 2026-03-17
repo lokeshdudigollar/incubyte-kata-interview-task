@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Response, status
 from sqlalchemy.orm import Session
 
 from app.database.connection import SessionLocal
@@ -38,6 +38,12 @@ def update_employee(employee_id: int, employee: EmployeeCreate, db: Session = De
     )
 
     return updated_employee
+
+@router.delete("/employees/{employee_id}", status_code=204)
+def delete_employee(employee_id: int, db: Session = Depends(get_db)):
+    service = EmployeeService(EmployeeRepository(db))
+    service.delete_employee(employee_id)
+    return Response(status_code=204)
 
 @router.get("/employees/{employee_id}/salary", response_model=SalaryResponse)
 def get_salary(employee_id: int, db: Session = Depends(get_db)):
