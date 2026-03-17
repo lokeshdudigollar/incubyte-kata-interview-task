@@ -5,7 +5,9 @@ from app.database.connection import SessionLocal
 from app.repositories.employee_repository import EmployeeRepository
 from app.schema.employee_schema import EmployeeCreate, EmployeeResponse
 from app.dependencies import get_db
+from app.schema.salary_schema import SalaryResponse
 from app.services.employee_service import EmployeeService
+from app.services.salary_service import SalaryService
 
 router = APIRouter()
 
@@ -24,7 +26,7 @@ def get_employee(employee_id: int, db: Session = Depends(get_db)):
     service = EmployeeService(repo)
     return service.get_employee(employee_id)
 
-@router.get("/employees/{employee_id}/salary")
+@router.get("/employees/{employee_id}/salary", response_model=SalaryResponse)
 def get_salary(employee_id: int, db: Session = Depends(get_db)):
-    service = EmployeeService(EmployeeRepository(db))
+    service = SalaryService(EmployeeRepository(db))
     return service.calculate_salary(employee_id)
