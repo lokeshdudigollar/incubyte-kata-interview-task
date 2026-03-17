@@ -23,3 +23,8 @@ def get_employee(employee_id: int, db: Session = Depends(get_db)):
     repo = EmployeeRepository(db)
     service = EmployeeService(repo)
     return service.get_employee(employee_id)
+
+@router.get("/employees/{employee_id}/salary")
+def get_salary(employee_id: int, db: Session = Depends(get_db)):
+    service = EmployeeService(EmployeeRepository(db))
+    return service.calculate_salary(employee_id)

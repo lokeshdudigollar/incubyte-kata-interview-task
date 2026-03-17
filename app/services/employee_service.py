@@ -22,3 +22,26 @@ class EmployeeService:
             raise HTTPException(status_code=404, detail="Employee not found")
 
         return employee
+    
+    def calculate_salary(self, employee_id: int):
+        employee = self.get_employee(employee_id)
+
+        if not employee:
+            raise HTTPException(status_code=404, detail="Employee not found")
+
+        gross = employee.salary
+        # Example salary calculation logic based on country
+        if employee.country == "India":
+            deduction = gross * 0.10  # 10% for India
+        elif employee.country == "United States":
+            deduction = gross * 0.12  # 12% for USA
+        else:
+            deduction = 0  # No deduction for other countries
+
+        net_salary = gross - deduction
+        return {
+            "employee_id": employee.id,
+            "gross_salary": gross,
+            "deduction": deduction,
+            "net_salary": net_salary
+        }
