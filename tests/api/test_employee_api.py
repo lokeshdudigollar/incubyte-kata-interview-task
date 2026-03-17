@@ -148,4 +148,23 @@ def test_salary_metrics_nonexistent_country(client):
     assert body["max_salary"] is None
     assert body["average_salary"] is None
 
+def test_update_employee(client):
+    data = employee_data()
 
+    create_response = client.post("/employees", json=data)
+    employee_id = create_response.json()["id"]
+
+    updated_data = {
+        "full_name": "Updated Name",
+        "job_title": "Senior Engineer",
+        "country": "India",
+        "salary": 500000
+    }
+
+    response = client.put(f"/employees/{employee_id}", json=updated_data)
+
+    assert response.status_code == 200
+    body = response.json()
+
+    assert body["full_name"] == "Updated Name"
+    assert body["salary"] == 500000
