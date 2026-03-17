@@ -6,7 +6,7 @@ class SalaryMetricsService:
     def __init__(self, repo):
         self.repo = repo
 
-    def get_metrics_by_country(self, country: str):
+    def get_salary_metrics_by_country(self, country: str) -> SalaryMetricsByCountryResponse:
         result = self.repo.get_salary_metrics_by_country(country)
         if result:
             min_salary, max_salary, avg_salary = result
@@ -20,7 +20,7 @@ class SalaryMetricsService:
             average_salary=avg_salary
         )
 
-    def get_average_by_job_title(self, job_title: str):
+    def get_salary_metrics_by_job_title(self, job_title: str) -> SalaryMetricsByJobTitleResponse:
         avg_salary = self.repo.get_average_salary_by_job_title(job_title)
 
         return SalaryMetricsByJobTitleResponse(

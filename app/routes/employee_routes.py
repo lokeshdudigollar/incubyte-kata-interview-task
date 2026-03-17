@@ -1,11 +1,10 @@
-from fastapi import APIRouter, Depends, HTTPException, Response, status
-from sqlalchemy.orm import Session
-
-from app.database.connection import SessionLocal
-from app.repositories.employee_repository import EmployeeRepository
+from fastapi import APIRouter, Depends, Response, status
 from app.schema.employee_schema import EmployeeCreate, EmployeeResponse
-from app.dependencies import get_db
-from app.schema.salary_metrics_schema import SalaryMetricsByCountryResponse, SalaryMetricsByJobTitleResponse
+from app.dependencies import get_employee_service, get_salary_metrics_service, get_salary_service
+from app.schema.salary_metrics_schema import (
+    SalaryMetricsByCountryResponse, 
+    SalaryMetricsByJobTitleResponse
+)
 from app.schema.salary_schema import SalaryResponse
 from app.services.employee_service import EmployeeService
 from app.services.salary_metrics_service import SalaryMetricsService
@@ -14,48 +13,33 @@ from app.services.salary_service import SalaryService
 router = APIRouter()
 
 @router.post("/employees", response_model=EmployeeResponse, status_code=status.HTTP_201_CREATED)
-def create_employee(employee: EmployeeCreate, db: Session = Depends(get_db)):
-    repo = EmployeeRepository(db)
-    service = EmployeeService(repo)
-    data = employee.model_dump()
-    created_employee = service.create_employee(**data)
-
-    return created_employee
+def create_employee(employee: EmployeeCreate, service: EmployeeService = Depends(get_employee_service)):
+    return service.create_employee(**employee.model_dump())
 
 @router.get("/employees/{employee_id}", response_model=EmployeeResponse)
-def get_employee(employee_id: int, db: Session = Depends(get_db)):
-    repo = EmployeeRepository(db)
-    service = EmployeeService(repo)
+def get_employee(employee_id: int, service: EmployeeService = Depends(get_employee_service)):
     return service.get_employee(employee_id)
 
 @router.put("/employees/{employee_id}", response_model=EmployeeResponse)
-def update_employee(employee_id: int, employee: EmployeeCreate, db: Session = Depends(get_db)):
-    service = EmployeeService(EmployeeRepository(db))
-
-    updated_employee = service.update_employee(
+def update_employee(employee_id: int, employee: EmployeeCreate, service: EmployeeService = Depends(get_employee_service)):
+    return service.update_employee(
         employee_id,
         **employee.model_dump()
     )
 
-    return updated_employee
-
 @router.delete("/employees/{employee_id}", status_code=204)
-def delete_employee(employee_id: int, db: Session = Depends(get_db)):
-    service = EmployeeService(EmployeeRepository(db))
+def delete_employee(employee_id: int, service: EmployeeService = Depends(get_employee_service)):
     service.delete_employee(employee_id)
     return Response(status_code=204)
 
 @router.get("/employees/{employee_id}/salary", response_model=SalaryResponse)
-def get_salary(employee_id: int, db: Session = Depends(get_db)):
-    service = SalaryService(EmployeeRepository(db))
+def get_salary(employee_id: int, service: SalaryService = Depends(get_salary_service)):
     return service.calculate_salary(employee_id)
 
 @router.get("/metrics/country/{country}", response_model=SalaryMetricsByCountryResponse)
-def get_metrics_by_country(country: str, db: Session = Depends(get_db)):
-    service = SalaryMetricsService(EmployeeRepository(db))
-    return service.get_metrics_by_country(country)
+def get_salary_metrics_by_country(country: str, service: SalaryMetricsService = Depends(get_salary_metrics_service)):
+    return service.get_salary_metrics_by_country(country)
 
 @router.get("/metrics/job-title/{job_title}", response_model=SalaryMetricsByJobTitleResponse)
-def get_metrics_by_job_title(job_title: str, db: Session = Depends(get_db)):
-    service = SalaryMetricsService(EmployeeRepository(db))
-    return service.get_average_by_job_title(job_title)
+def get_salary_metrics_by_job_title(job_title: str, service: SalaryMetricsService = Depends(get_salary_metrics_service)):
+    return service.get_salary_metrics_by_job_title(job_title)

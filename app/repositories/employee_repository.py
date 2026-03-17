@@ -11,7 +11,7 @@ class EmployeeRepository:
     def _query(self):
         return self.db.query(Employee)
 
-    def create_employee(self, full_name, job_title, country, salary):
+    def create_employee(self, full_name, job_title, country, salary) -> Employee:
         employee = Employee(
             full_name=full_name,
             job_title=job_title,
@@ -25,10 +25,10 @@ class EmployeeRepository:
 
         return employee
 
-    def get_employee(self, employee_id: int):
+    def get_employee(self, employee_id: int) -> Employee | None:
         return self.db.query(Employee).filter(Employee.id == employee_id).first()
     
-    def update_employee(self, employee_id: int, **kwargs):
+    def update_employee(self, employee_id: int, **kwargs) -> Employee | None:
         employee = self.get_employee(employee_id)
 
         if not employee:
@@ -42,7 +42,7 @@ class EmployeeRepository:
 
         return employee
     
-    def delete_employee(self, employee_id: int):
+    def delete_employee(self, employee_id: int) -> bool:
         employee = self.get_employee(employee_id)
 
         if not employee:
@@ -52,8 +52,8 @@ class EmployeeRepository:
         self.db.commit()
 
         return True
-    
-    def get_salary_metrics_by_country(self, country: str):
+
+    def get_salary_metrics_by_country(self, country: str) -> tuple[float | None, float | None, float | None]:
         return (
             self.db.query(
                 func.min(Employee.salary),
@@ -64,7 +64,7 @@ class EmployeeRepository:
             .first()
         )
     
-    def get_average_salary_by_job_title(self, job_title: str):
+    def get_average_salary_by_job_title(self, job_title: str) -> float | None:
         return (
             self.db.query(func.avg(Employee.salary))
             .filter(Employee.job_title == job_title)
