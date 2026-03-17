@@ -13,6 +13,9 @@ def get_db():
     finally:
         db.close()
 
+# Dependency injection functions for FastAPI routes.
+# These functions provide service instances, which can be injected into 
+# route handlers using FastAPI's Depends system.
 def get_employee_service(db: Session = Depends(get_db)) -> EmployeeService:
     return EmployeeService(EmployeeRepository(db))
 

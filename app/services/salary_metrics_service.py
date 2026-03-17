@@ -7,6 +7,13 @@ class SalaryMetricsService:
         self.repo = repo
 
     def get_salary_metrics_by_country(self, country: str) -> SalaryMetricsByCountryResponse:
+        """
+        Get salary metrics (min, max, average) for a given country.
+        Returns:
+            SalaryMetricsByCountryResponse: 
+                Contains country, min_salary, max_salary, average_salary
+        If no employees exist for the country, all values are None.
+        """
         result = self.repo.get_salary_metrics_by_country(country)
         if result:
             min_salary, max_salary, avg_salary = result
@@ -21,6 +28,11 @@ class SalaryMetricsService:
         )
 
     def get_salary_metrics_by_job_title(self, job_title: str) -> SalaryMetricsByJobTitleResponse:
+        """
+        Get average salary for a given job title.
+        Returns:
+            SalaryMetricsByJobTitleResponse: Contains job_title and average_salary
+        """
         avg_salary = self.repo.get_average_salary_by_job_title(job_title)
 
         return SalaryMetricsByJobTitleResponse(

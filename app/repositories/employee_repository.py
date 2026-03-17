@@ -54,6 +54,12 @@ class EmployeeRepository:
         return True
 
     def get_salary_metrics_by_country(self, country: str) -> tuple[float | None, float | None, float | None]:
+        """
+        Fetch aggregated salary metrics (min, max, avg) for a country.
+
+        Returns a tuple of (min, max, avg). If no records exist,
+        values will be (None, None, None).
+        """
         return (
             self.db.query(
                 func.min(Employee.salary),

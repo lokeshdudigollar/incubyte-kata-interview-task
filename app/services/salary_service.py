@@ -8,6 +8,9 @@ class SalaryService:
         self.repo = repo
 
     def _get_deduction_rate(self, country: str) -> float:
+        """
+        Get the deduction rate based on the employee's country.        
+        """
         if country == "India":
             return 0.10
         elif country == "United States":
@@ -15,6 +18,17 @@ class SalaryService:
         return 0
     
     def calculate_salary(self, employee_id: int):
+        """
+        Calculate salary breakdown for a given employee.
+
+        Applies country-specific deduction rules:
+        - India: 10% TDS
+        - United States: 12% TDS
+        - Others: No deduction
+
+        Raises:
+            HTTPException: If employee is not found.
+        """
         employee = self.repo.get_employee(employee_id)
 
         if not employee:
