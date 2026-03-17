@@ -3,6 +3,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from app.config import TEST_DATABASE_URL
 from app.database.base import Base
+from fastapi.testclient import TestClient
+from app.main import app
 
 @pytest.fixture
 def db_session():
@@ -18,3 +20,8 @@ def db_session():
     # Teardown: Drop everything after the test
     session.close()
     Base.metadata.drop_all(bind=engine)
+
+@pytest.fixture
+def client():
+    with TestClient(app) as c:
+        yield c
