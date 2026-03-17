@@ -47,3 +47,60 @@ def test_get_employee_not_found(client):
 
     assert response.status_code == 404
     assert response.json()["detail"] == "Employee not found"
+
+def test_salary_calculation_india(client):
+    data = employee_data(country="India", salary=100000)
+
+    create_response = client.post("/employees", json=data)
+    employee_id = create_response.json()["id"]
+
+    response = client.get(f"/employees/{employee_id}/salary")
+
+    assert response.status_code == 200
+
+    body = response.json()
+
+    assert body["employee_id"] == employee_id
+    assert body["gross_salary"] == 100000
+    assert body["deduction"] == 10000  # 10%
+    assert body["net_salary"] == 90000
+
+def test_salary_calculation_us(client):
+    data = employee_data(country="United States", salary=100000)
+
+    create_response = client.post("/employees", json=data)
+    employee_id = create_response.json()["id"]
+
+    response = client.get(f"/employees/{employee_id}/salary")
+
+    assert response.status_code == 200
+
+    body = response.json()
+
+    assert body["employee_id"] == employee_id
+    assert body["gross_salary"] == 100000
+    assert body["deduction"] == 12000  # 12%
+    assert body["net_salary"] == 88000
+
+def test_salary_calculation_other_country(client):
+    data = employee_data(country="Germany", salary=100000)
+
+    create_response = client.post("/employees", json=data)
+    employee_id = create_response.json()["id"]
+
+    response = client.get(f"/employees/{employee_id}/salary")
+
+    assert response.status_code == 200
+
+    body = response.json()
+
+    assert body["employee_id"] == employee_id
+    assert body["gross_salary"] == 100000
+    assert body["deduction"] == 0
+    assert body["net_salary"] == 100000
+
+def test_salary_calculation_employee_not_found(client):
+    response = client.get("/employees/9999/salary")
+
+    assert response.status_code == 404
+    assert response.json()["detail"] == "Employee not found"
