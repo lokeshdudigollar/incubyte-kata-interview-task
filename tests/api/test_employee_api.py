@@ -107,42 +107,38 @@ def test_salary_calculation_employee_not_found(client):
 
 def test_salary_metrics_by_country(client):
     # Create employees in different countries
-    data_india = employee_data(country="India", salary=100000)
-    data_us = employee_data(country="United States", salary=100000)
-    data_germany = employee_data(country="Germany", salary=100000)
-
-    client.post("/employees", json=data_india)
-    client.post("/employees", json=data_us)
-    client.post("/employees", json=data_germany)
+    client.post("/employees", json=employee_data(country="India", salary=100000))
+    client.post("/employees", json=employee_data(country="United States", salary=100000))
+    client.post("/employees", json=employee_data(country="Germany", salary=100000))
 
     # Fetch salary for each employee and assert deductions
-    response = client.get("metrics/salaries/country/India")
+    response = client.get("/metrics/country/India")
 
     assert response.status_code == 200
     body = response.json()
 
     assert body["country"] == "India"
-    assert body["min_salary"] == 10000
+    assert body["min_salary"] == 100000
     assert body["max_salary"] == 100000
-    assert body["average_salary"] == 55000
+    assert body["average_salary"] == 100000
 
 def test_salary_metrics_by_job_title(client):
-    client.post("/employees", json= employee_data(job_title="Developer", salary=100000))
-    client.post("/employees", json= employee_data(job_title="Developer", salary=150000))
+    client.post("/employees", json=employee_data(job_title="Developer", salary=100000))
+    client.post("/employees", json=employee_data(job_title="Developer", salary=150000))
 
     # Fetch salary for job title and assert deductions
-    response = client.get("metrics/salaries/job_title/Developer")
+    response = client.get("/metrics/job-title/Developer")
 
     assert response.status_code == 200
     body = response.json()
 
     assert body["job_title"] == "Developer"
-    assert body["average_salary"] == 100000
+    assert body["average_salary"] == 125000
 
 
 def test_salary_metrics_nonexistent_country(client):
     # Fetch salary for each employee and assert deductions
-    response = client.get("metrics/salaries/country/Wakanda")
+    response = client.get("/metrics/country/Wakanda")
 
     assert response.status_code == 200
     body = response.json()

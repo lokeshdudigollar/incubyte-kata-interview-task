@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 from app.models import Employee
+from sqlalchemy import func
 
 
 class EmployeeRepository:
@@ -26,3 +27,21 @@ class EmployeeRepository:
 
     def get_employee(self, employee_id: int):
         return self.db.query(Employee).filter(Employee.id == employee_id).first()
+    
+    def get_salary_metrics_by_country(self, country: str):
+        return (
+            self.db.query(
+                func.min(Employee.salary),
+                func.max(Employee.salary),
+                func.avg(Employee.salary)
+            )
+            .filter(Employee.country == country)
+            .first()
+        )
+    
+    def get_average_salary_by_job_title(self, job_title: str):
+        return (
+            self.db.query(func.avg(Employee.salary))
+            .filter(Employee.job_title == job_title)
+            .scalar()
+        )
