@@ -168,3 +168,17 @@ def test_update_employee(client):
 
     assert body["full_name"] == "Updated Name"
     assert body["salary"] == 500000
+
+def test_delete_employee(client):
+    data = employee_data()
+
+    create_response = client.post("/employees", json=data)
+    employee_id = create_response.json()["id"]
+
+    response = client.delete(f"/employees/{employee_id}")
+
+    assert response.status_code == 204
+
+    # verify deletion
+    get_response = client.get(f"/employees/{employee_id}")
+    assert get_response.status_code == 404
