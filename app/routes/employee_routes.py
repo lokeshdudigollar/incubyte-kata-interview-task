@@ -28,6 +28,17 @@ def get_employee(employee_id: int, db: Session = Depends(get_db)):
     service = EmployeeService(repo)
     return service.get_employee(employee_id)
 
+@router.put("/employees/{employee_id}", response_model=EmployeeResponse)
+def update_employee(employee_id: int, employee: EmployeeCreate, db: Session = Depends(get_db)):
+    service = EmployeeService(EmployeeRepository(db))
+
+    updated_employee = service.update_employee(
+        employee_id,
+        **employee.model_dump()
+    )
+
+    return updated_employee
+
 @router.get("/employees/{employee_id}/salary", response_model=SalaryResponse)
 def get_salary(employee_id: int, db: Session = Depends(get_db)):
     service = SalaryService(EmployeeRepository(db))

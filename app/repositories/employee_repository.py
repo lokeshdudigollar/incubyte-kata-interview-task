@@ -28,6 +28,20 @@ class EmployeeRepository:
     def get_employee(self, employee_id: int):
         return self.db.query(Employee).filter(Employee.id == employee_id).first()
     
+    def update_employee(self, employee_id: int, **kwargs):
+        employee = self.get_employee(employee_id)
+
+        if not employee:
+            return None
+
+        for key, value in kwargs.items():
+            setattr(employee, key, value)
+
+        self.db.commit()
+        self.db.refresh(employee)
+
+        return employee
+    
     def get_salary_metrics_by_country(self, country: str):
         return (
             self.db.query(

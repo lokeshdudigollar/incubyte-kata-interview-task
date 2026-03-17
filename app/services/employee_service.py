@@ -22,3 +22,11 @@ class EmployeeService:
             raise HTTPException(status_code=404, detail="Employee not found")
 
         return employee
+    
+    def update_employee(self, employee_id: int, **data):
+        employee = self.repo.update_employee(employee_id, **data)
+
+        if not employee:
+            raise HTTPException(status_code=404, detail="Employee not found")
+
+        return employee
