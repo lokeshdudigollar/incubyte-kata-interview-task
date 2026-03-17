@@ -6,6 +6,9 @@ class EmployeeRepository:
 
     def __init__(self, db: Session):
         self.db = db
+    
+    def _query(self):
+        return self.db.query(Employee)
 
     def create_employee(self, full_name, job_title, country, salary):
         employee = Employee(

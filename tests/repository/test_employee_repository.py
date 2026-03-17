@@ -1,34 +1,24 @@
-from app.models import Employee
 from app.repositories.employee_repository import EmployeeRepository
+from tests.utils.employee_data import employee_data
 
 
 def test_create_employee(db_session):
     repo = EmployeeRepository(db_session)
-
-    employee = repo.create_employee(
-        full_name="Lokesh Dudigollar",
-        job_title="Software Engineer",
-        country="India",
-        salary=300000
-    )
+    data = employee_data()
+    employee = repo.create_employee(**data)
 
     assert employee.id is not None
-    assert employee.full_name == "Lokesh Dudigollar"
-    assert employee.job_title == "Software Engineer"
-    assert employee.country == "India"
-    assert employee.salary == 300000
+    assert employee.full_name == data["full_name"]
+    assert employee.job_title == data["job_title"]
+    assert employee.country == data["country"]
+    assert employee.salary == data["salary"]
 
 def test_get_employee_by_id(db_session):
     repo = EmployeeRepository(db_session)
 
-    employee = repo.create_employee(
-        full_name="Lokesh Dudigollar",
-        job_title="Software Engineer",
-        country="India",
-        salary=300000
-    )
+    employeeeCreated = repo.create_employee(**employee_data())
 
-    fetched = repo.get_employee(employee.id)
-
-    assert fetched.id == employee.id
-    assert fetched.full_name == "Lokesh Dudigollar"
+    employeeFetched = repo.get_employee(employeeeCreated.id)
+    assert employeeFetched is not None
+    assert employeeFetched.id == employeeeCreated.id
+    assert employeeFetched.full_name == employeeeCreated.full_name
