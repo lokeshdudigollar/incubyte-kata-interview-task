@@ -1,45 +1,47 @@
 import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from app.config import TEST_DATABASE_URL_FILE_BASED
+from app.config import TEST_DATABASE_URL_FILE_BASED, TEST_IN_MEMORY_DB
 from app.database.base import Base
 from fastapi.testclient import TestClient
 from app.main import app
 from app.dependencies import get_db
+from sqlalchemy.pool import StaticPool
 
-@pytest.fixture
-def db_session():
-    engine = create_engine(TEST_DATABASE_URL_FILE_BASED, connect_args={"check_same_thread": False})
-    # Create the tables
+# In-memory DB plus static pool
+engine = create_engine(
+    TEST_IN_MEMORY_DB, #in-memory db
+    connect_args={"check_same_thread": False},
+    poolclass=StaticPool # required for shared connection
+)
+
+TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+#autouse fixure for setup/tear down
+@pytest.fixture(autouse=True)
+def setup_and_teardown_db():
     Base.metadata.create_all(bind=engine)
-    
-    Session = sessionmaker(bind=engine)
-    session = Session()
-    
-    yield session
-    
-    # Teardown: Drop everything after the test
-    session.close()
+    yield
     Base.metadata.drop_all(bind=engine)
 
+#ovveride DB dependecny
 @pytest.fixture
-def client():
-    engine = create_engine(TEST_DATABASE_URL_FILE_BASED, connect_args={"check_same_thread": False})
+def db_session():
+    session = TestingSessionLocal()
+    try:
+        yield session
+    finally:
+        session.close()
 
-    TestingSessionLocal = sessionmaker(
-        bind=engine
-    )
 
-    # create tables BEFORE override
-    Base.metadata.create_all(bind=engine)
-
+@pytest.fixture
+def client(db_session):
     # Override dependency 
     def override_get_db():
-        db = TestingSessionLocal()
         try:
-            yield db
+            yield db_session
         finally:
-            db.close()
+            pass    
 
     app.dependency_overrides[get_db] = override_get_db
 
