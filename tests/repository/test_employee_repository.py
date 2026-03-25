@@ -22,3 +22,18 @@ def test_get_employee_by_id(db_session):
     assert employeeFetched is not None
     assert employeeFetched.id == employeeeCreated.id
     assert employeeFetched.full_name == employeeeCreated.full_name
+
+def test_get_all_employees(db_session):
+    repo = EmployeeRepository(db_session)
+
+    data1 = employee_data(full_name="A")
+    data2 = employee_data(full_name="B")
+
+    repo.create_employee(**data1)
+    repo.create_employee(**data2)
+
+    employees = repo.get_all_employees()
+
+    assert len(employees) == 2
+    assert employees[0].full_name == "A"
+    assert employees[1].full_name == "B"
