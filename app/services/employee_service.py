@@ -32,6 +32,9 @@ class EmployeeService:
 
         return employee
 
+    def get_all_employees(self) -> list[Employee]:
+        return self.repo.get_all_employees()
+    
     def delete_employee(self, employee_id: int) -> None:
         deleted = self.repo.delete_employee(employee_id)
 

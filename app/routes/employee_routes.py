@@ -20,6 +20,10 @@ def create_employee(employee: EmployeeCreate, service: EmployeeService = Depends
 def get_employee(employee_id: int, service: EmployeeService = Depends(get_employee_service)):
     return service.get_employee(employee_id)
 
+@router.get("/employees", response_model=list[EmployeeResponse])
+def get_all_employees(service: EmployeeService = Depends(get_employee_service)):
+    return service.get_all_employees()
+
 @router.put("/employees/{employee_id}", response_model=EmployeeResponse)
 def update_employee(employee_id: int, employee: EmployeeCreate, service: EmployeeService = Depends(get_employee_service)):
     return service.update_employee(
