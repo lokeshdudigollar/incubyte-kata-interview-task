@@ -6,7 +6,7 @@ def test_create_employee(db_session):
         full_name="Lokesh Dudigollar",
         job_title="Software Engineer",
         country="India",
-        salary=300000
+        salary=300000,
     )
 
     db_session.add(employee)

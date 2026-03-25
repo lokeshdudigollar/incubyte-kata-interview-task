@@ -9,7 +9,7 @@ class SalaryService:
 
     def _get_deduction_rate(self, country: str) -> float:
         """
-        Get the deduction rate based on the employee's country.        
+        Get the deduction rate based on the employee's country.
         """
         normalized_country = country.strip().lower()
         if normalized_country == "india":
@@ -17,7 +17,7 @@ class SalaryService:
         elif normalized_country in ["united states", "usa"]:
             return 0.12
         return 0
-    
+
     def calculate_salary(self, employee_id: int):
         """
         Calculate salary breakdown for a given employee.
@@ -42,7 +42,5 @@ class SalaryService:
         net_salary = gross_salary - deduction
 
         return SalaryResponse(
-            gross_salary=gross_salary,
-            deduction=deduction,
-            net_salary=net_salary
+            gross_salary=gross_salary, deduction=deduction, net_salary=net_salary
         )

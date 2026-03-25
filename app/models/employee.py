@@ -9,4 +9,4 @@ class Employee(Base):
     full_name = Column(String, nullable=False)
     job_title = Column(String, nullable=False)
     country = Column(String, nullable=False)
-    salary = Column(Float, nullable=False) 
+    salary = Column(Float, nullable=False)

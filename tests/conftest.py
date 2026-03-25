@@ -10,21 +10,23 @@ from sqlalchemy.pool import StaticPool
 
 # In-memory DB plus static pool
 engine = create_engine(
-    TEST_IN_MEMORY_DB, #in-memory db
+    TEST_IN_MEMORY_DB,  # in-memory db
     connect_args={"check_same_thread": False},
-    poolclass=StaticPool # required for shared connection
+    poolclass=StaticPool,  # required for shared connection
 )
 
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-#autouse fixure for setup/tear down
+
+# autouse fixure for setup/tear down
 @pytest.fixture(autouse=True)
 def setup_and_teardown_db():
     Base.metadata.create_all(bind=engine)
     yield
     Base.metadata.drop_all(bind=engine)
 
-#ovveride DB dependecny
+
+# ovveride DB dependecny
 @pytest.fixture
 def db_session():
     session = TestingSessionLocal()
@@ -36,12 +38,12 @@ def db_session():
 
 @pytest.fixture
 def client(db_session):
-    # Override dependency 
+    # Override dependency
     def override_get_db():
         try:
             yield db_session
         finally:
-            pass    
+            pass
 
     app.dependency_overrides[get_db] = override_get_db
 

@@ -1,6 +1,7 @@
 from tests.utils.employee_data import employee_data
 import pytest
 
+
 # --- CREATE EMPLOYEE ---
 def test_create_employee_api(client):
     data = employee_data()
@@ -17,7 +18,9 @@ def test_create_employee_api(client):
     assert body["country"] == data["country"]
     assert body["salary"] == data["salary"]
 
+
 # --- GET EMPLOYEE BY ID---
+
 
 def test_get_employee_by_id_api(client):
     data = employee_data()
@@ -41,6 +44,7 @@ def test_get_employee_by_id_api(client):
     assert body["country"] == data["country"]
     assert body["salary"] == data["salary"]
 
+
 # --- GET ALL EMPLOYEES---
 def test_get_all_employees_api(client):
     # Create two distinct employees
@@ -53,10 +57,10 @@ def test_get_all_employees_api(client):
     # Assertions
     assert response.status_code == 200
     body = response.json()
-    
+
     assert isinstance(body, list)
     assert len(body) >= 2
-    
+
     # Ensure our specific test data is present
     names = [emp["full_name"] for emp in body]
     assert "Alice" in names
@@ -70,6 +74,7 @@ def test_get_employee_not_found(client):
     assert response.status_code == 404
     assert response.json()["detail"] == "Employee not found"
 
+
 # --- UPDATE EMPLOYEE ---
 def test_update_employee(client):
     data = employee_data()
@@ -81,7 +86,7 @@ def test_update_employee(client):
         "full_name": "Updated Name",
         "job_title": "Senior Engineer",
         "country": "India",
-        "salary": 500000
+        "salary": 500000,
     }
 
     response = client.put(f"/employees/{employee_id}", json=updated_data)
@@ -91,6 +96,7 @@ def test_update_employee(client):
 
     assert body["full_name"] == "Updated Name"
     assert body["salary"] == 500000
+
 
 # --- DELETE EMPLOYEE ---
 def test_delete_employee(client):
@@ -107,6 +113,7 @@ def test_delete_employee(client):
     get_response = client.get(f"/employees/{employee_id}")
     assert get_response.status_code == 404
 
+
 # --- CREATE EMPLOYEE MISSING FIELDS ---
 def test_create_employee_missing_fields(client):
     data = employee_data()
@@ -116,6 +123,7 @@ def test_create_employee_missing_fields(client):
 
     assert response.status_code == 422
 
+
 # --- UPDATE EMPLOYEE NOT FOUND ---
 def test_update_employee_not_found(client):
     updated_data = employee_data(full_name="Ghost", salary=99999)
@@ -124,6 +132,7 @@ def test_update_employee_not_found(client):
 
     assert response.status_code == 404
     assert response.json()["detail"] == "Employee not found"
+
 
 # --- DELETE EMPLOYEE NOT FOUND ---
 def test_delete_employee_not_found(client):

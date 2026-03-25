@@ -3,7 +3,7 @@ def employee_data(**overrides):
         "full_name": "Lokesh Dudigollar",
         "job_title": "Software Engineer",
         "country": "India",
-        "salary": 300000
+        "salary": 300000,
     }
     data.update(overrides)
     return data

@@ -7,16 +7,13 @@ class EmployeeRepository:
 
     def __init__(self, db: Session):
         self.db = db
-    
+
     def _query(self):
         return self.db.query(Employee)
 
     def create_employee(self, full_name, job_title, country, salary) -> Employee:
         employee = Employee(
-            full_name=full_name,
-            job_title=job_title,
-            country=country,
-            salary=salary
+            full_name=full_name, job_title=job_title, country=country, salary=salary
         )
 
         self.db.add(employee)
@@ -27,10 +24,10 @@ class EmployeeRepository:
 
     def get_employee(self, employee_id: int) -> Employee | None:
         return self.db.query(Employee).filter(Employee.id == employee_id).first()
-    
+
     def get_all_employees(self) -> list[Employee]:
         return self.db.query(Employee).order_by(Employee.id).all()
-    
+
     def update_employee(self, employee_id: int, **kwargs) -> Employee | None:
         employee = self.get_employee(employee_id)
 
@@ -44,7 +41,7 @@ class EmployeeRepository:
         self.db.refresh(employee)
 
         return employee
-    
+
     def delete_employee(self, employee_id: int) -> bool:
         employee = self.get_employee(employee_id)
 
@@ -56,7 +53,9 @@ class EmployeeRepository:
 
         return True
 
-    def get_salary_metrics_by_country(self, country: str) -> tuple[float | None, float | None, float | None]:
+    def get_salary_metrics_by_country(
+        self, country: str
+    ) -> tuple[float | None, float | None, float | None]:
         """
         Fetch aggregated salary metrics (min, max, avg) for a country.
 
@@ -78,12 +77,12 @@ class EmployeeRepository:
             self.db.query(
                 func.min(Employee.salary),
                 func.max(Employee.salary),
-                func.avg(Employee.salary)
+                func.avg(Employee.salary),
             )
             .filter(filter_condition)
             .first()
         )
-    
+
     def get_average_salary_by_job_title(self, job_title: str) -> float | None:
         search_term = job_title.lower().strip()
         return (
