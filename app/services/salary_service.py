@@ -11,9 +11,10 @@ class SalaryService:
         """
         Get the deduction rate based on the employee's country.        
         """
-        if country == "India":
+        normalized_country = country.strip().lower()
+        if normalized_country == "india":
             return 0.10
-        elif country == "United States":
+        elif normalized_country in ["united states", "usa"]:
             return 0.12
         return 0
     
@@ -41,7 +42,6 @@ class SalaryService:
         net_salary = gross_salary - deduction
 
         return SalaryResponse(
-            employee_id=employee.id,
             gross_salary=gross_salary,
             deduction=deduction,
             net_salary=net_salary
