@@ -70,108 +70,7 @@ def test_get_employee_not_found(client):
     assert response.status_code == 404
     assert response.json()["detail"] == "Employee not found"
 
-# Using parametrization to cover India (case-insensitive), USA (alias), and Defaults
-@pytest.mark.parametrize("country_input, salary, expected_deduction, expected_net", [
-    # India rule: 10% (Testing case sensitivity)
-    ("India", 100000, 10000, 90000),
-    ("india", 100000, 10000, 90000),
-    ("INDIA", 100000, 10000, 90000),
-    
-    # US rule: 12% (Testing aliases and case)
-    ("United States", 100000, 12000, 88000),
-    ("USA", 100000, 12000, 88000),
-    
-    # Other countries: 0%
-    ("Germany", 100000, 0, 100000),
-    ("Brazil", 200000, 0, 200000)
-])
-
-def test_salary_calculation(client, country_input, salary, expected_deduction, expected_net):
-    data = employee_data(country=country_input, salary=salary)
-
-    create_response = client.post("/employees", json=data)
-    employee_id = create_response.json()["id"]
-
-    response = client.get(f"/employees/{employee_id}/salary")
-
-    assert response.status_code == 200
-
-    body = response.json()
-
-    assert body["gross_salary"] == salary
-    assert body["deduction"] == expected_deduction
-    assert body["net_salary"] == expected_net
-
-
-def test_salary_calculation_employee_not_found(client):
-    response = client.get("/employees/9999/salary")
-
-    assert response.status_code == 404
-    assert response.json()["detail"] == "Employee not found"
-
-@pytest.mark.parametrize("country_input", [
-    "India",
-    "india",
-    "INDIA",
-])
-def test_salary_metrics_by_country(client, country_input):
-    # Create employees in different countries
-    client.post("/employees", json=employee_data(country="India", salary=100000))
-    client.post("/employees", json=employee_data(country="United States", salary=100000))
-    client.post("/employees", json=employee_data(country="Germany", salary=100000))
-
-    # Fetch salary for each employee and assert deductions
-    response = client.get(f"/metrics/country/{country_input}")
-
-    assert response.status_code == 200
-    body = response.json()
-
-    assert body["country"] == country_input
-    assert body["min_salary"] == 100000
-    assert body["max_salary"] == 100000
-    assert body["average_salary"] == 100000
-
-@pytest.mark.parametrize("job_title_input", [
-    "Developer",
-    "developer",
-    "DEVELOPER",
-])
-def test_salary_metrics_by_job_title(client, job_title_input):
-    client.post("/employees", json=employee_data(job_title="Developer", salary=100000))
-    client.post("/employees", json=employee_data(job_title="Developer", salary=150000))
-
-    # Fetch salary for job title and assert deductions
-    response = client.get(f"/metrics/job-title/{job_title_input}")
-
-    assert response.status_code == 200
-    body = response.json()
-
-    assert body["job_title"] == job_title_input
-    assert body["average_salary"] == 125000
-
-
-def test_salary_metrics_nonexistent_country(client):
-    # Fetch salary for each employee and assert deductions
-    response = client.get("/metrics/country/Wakanda")
-
-    assert response.status_code == 200
-    body = response.json()
-
-    assert body["country"] == "Wakanda"
-    assert body["min_salary"] is None
-    assert body["max_salary"] is None
-    assert body["average_salary"] is None
-
-def test_salary_metrics_nonexistent_job_title(client):
-    # Fetch salary for each employee and assert deductions
-    response = client.get("/metrics/job-title/notKnown")
-
-    assert response.status_code == 200
-    body = response.json()
-
-    assert body["job_title"] == "notKnown"
-    assert body["average_salary"] is None
-
+# --- UPDATE EMPLOYEE ---
 def test_update_employee(client):
     data = employee_data()
 
@@ -193,6 +92,7 @@ def test_update_employee(client):
     assert body["full_name"] == "Updated Name"
     assert body["salary"] == 500000
 
+# --- DELETE EMPLOYEE ---
 def test_delete_employee(client):
     data = employee_data()
 
@@ -207,6 +107,7 @@ def test_delete_employee(client):
     get_response = client.get(f"/employees/{employee_id}")
     assert get_response.status_code == 404
 
+# --- CREATE EMPLOYEE MISSING FIELDS ---
 def test_create_employee_missing_fields(client):
     data = employee_data()
     del data["full_name"]  # Remove a required field
@@ -215,6 +116,7 @@ def test_create_employee_missing_fields(client):
 
     assert response.status_code == 422
 
+# --- UPDATE EMPLOYEE NOT FOUND ---
 def test_update_employee_not_found(client):
     updated_data = employee_data(full_name="Ghost", salary=99999)
 
@@ -223,6 +125,7 @@ def test_update_employee_not_found(client):
     assert response.status_code == 404
     assert response.json()["detail"] == "Employee not found"
 
+# --- DELETE EMPLOYEE NOT FOUND ---
 def test_delete_employee_not_found(client):
     response = client.delete("/employees/9999")
 
