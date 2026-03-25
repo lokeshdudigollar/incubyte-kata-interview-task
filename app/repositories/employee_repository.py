@@ -29,7 +29,7 @@ class EmployeeRepository:
         return self.db.query(Employee).filter(Employee.id == employee_id).first()
     
     def get_all_employees(self) -> list[Employee]:
-        return self.db.query(Employee).all()
+        return self.db.query(Employee).order_by(Employee.id).all()
     
     def update_employee(self, employee_id: int, **kwargs) -> Employee | None:
         employee = self.get_employee(employee_id)
