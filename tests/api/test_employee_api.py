@@ -206,3 +206,25 @@ def test_delete_employee(client):
     # verify deletion
     get_response = client.get(f"/employees/{employee_id}")
     assert get_response.status_code == 404
+
+def test_create_employee_missing_fields(client):
+    data = employee_data()
+    del data["full_name"]  # Remove a required field
+
+    response = client.post("/employees", json=data)
+
+    assert response.status_code == 422
+
+def test_update_employee_not_found(client):
+    updated_data = employee_data(full_name="Ghost", salary=99999)
+
+    response = client.put("/employees/9999", json=updated_data)
+
+    assert response.status_code == 404
+    assert response.json()["detail"] == "Employee not found"
+
+def test_delete_employee_not_found(client):
+    response = client.delete("/employees/9999")
+
+    assert response.status_code == 404
+    assert response.json()["detail"] == "Employee not found"
