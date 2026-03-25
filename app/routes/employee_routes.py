@@ -67,9 +67,7 @@ def get_salary_metrics_by_country(
     return service.get_salary_metrics_by_country(country)
 
 
-@router.get(
-    "/metrics/job-title/{job_title}", response_model=SalaryMetricsByJobTitleResponse
-)
+@router.get("/metrics/job/{job_title}", response_model=SalaryMetricsByJobTitleResponse)
 def get_salary_metrics_by_job_title(
     job_title: str, service: SalaryMetricsService = Depends(get_salary_metrics_service)
 ):

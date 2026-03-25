@@ -45,7 +45,7 @@ def test_salary_metrics_by_job_title(client, job_title_input):
     client.post("/employees", json=employee_data(job_title="Developer", salary=150000))
 
     # Fetch salary for job title and assert deductions
-    response = client.get(f"/metrics/job-title/{job_title_input}")
+    response = client.get(f"/metrics/job/{job_title_input}")
 
     assert response.status_code == 200
     body = response.json()
@@ -71,7 +71,7 @@ def test_salary_metrics_nonexistent_country(client):
 # --- SALARY METRICS FOR NON EXISTENT JOB TITLE ---
 def test_salary_metrics_nonexistent_job_title(client):
     # Fetch salary for each employee and assert deductions
-    response = client.get("/metrics/job-title/notKnown")
+    response = client.get("/metrics/job/notKnown")
 
     assert response.status_code == 200
     body = response.json()

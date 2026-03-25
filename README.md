@@ -60,7 +60,7 @@ GET /employees/{id}/salary
 ### Metrics
 
 GET /metrics/country/{country}
-GET /metrics/job-title/{job_title}
+GET /metrics/job/{job_title}
 
 ## Architechute responsibilities
 
