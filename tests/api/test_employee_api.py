@@ -40,6 +40,27 @@ def test_get_employee_by_id_api(client):
     assert body["country"] == data["country"]
     assert body["salary"] == data["salary"]
 
+# --- GET ALL EMPLOYEES---
+def test_get_all_employees_api(client):
+    # Create two distinct employees
+    client.post("/employees", json=employee_data(full_name="Alice", salary=50000))
+    client.post("/employees", json=employee_data(full_name="Bob", salary=60000))
+
+    # Hit the GET collection endpoint
+    response = client.get("/employees")
+
+    # Assertions
+    assert response.status_code == 200
+    body = response.json()
+    
+    assert isinstance(body, list)
+    assert len(body) >= 2
+    
+    # Ensure our specific test data is present
+    names = [emp["full_name"] for emp in body]
+    assert "Alice" in names
+    assert "Bob" in names
+
 
 # --- GET EMPLOYEE NOT FOUND ---
 def test_get_employee_not_found(client):
