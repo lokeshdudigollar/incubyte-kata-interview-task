@@ -16,12 +16,12 @@ def test_create_employee(db_session):
 def test_get_employee_by_id(db_session):
     repo = EmployeeRepository(db_session)
 
-    employeeeCreated = repo.create_employee(**employee_data())
+    employee_created = repo.create_employee(**employee_data())
 
-    employeeFetched = repo.get_employee(employeeeCreated.id)
-    assert employeeFetched is not None
-    assert employeeFetched.id == employeeeCreated.id
-    assert employeeFetched.full_name == employeeeCreated.full_name
+    employee_fetched = repo.get_employee(employee_created.id)
+    assert employee_fetched is not None
+    assert employee_fetched.id == employee_created.id
+    assert employee_fetched.full_name == employee_created.full_name
 
 def test_get_all_employees(db_session):
     repo = EmployeeRepository(db_session)
