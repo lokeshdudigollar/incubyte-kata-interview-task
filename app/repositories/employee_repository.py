@@ -63,19 +63,31 @@ class EmployeeRepository:
         Returns a tuple of (min, max, avg). If no records exist,
         values will be (None, None, None).
         """
+        search_term = country.lower().strip()
+
+        # Define the alias group
+        usa_aliases = ["usa", "united states"]
+        if search_term in usa_aliases:
+            # If the user searches for EITHER, we look for BOTH in the DB
+            filter_condition = func.lower(Employee.country).in_(usa_aliases)
+        else:
+            # Standard case-insensitive match for other countries
+            filter_condition = func.lower(Employee.country) == search_term
+
         return (
             self.db.query(
                 func.min(Employee.salary),
                 func.max(Employee.salary),
                 func.avg(Employee.salary)
             )
-            .filter(Employee.country == country)
+            .filter(filter_condition)
             .first()
         )
     
     def get_average_salary_by_job_title(self, job_title: str) -> float | None:
+        search_term = job_title.lower().strip()
         return (
             self.db.query(func.avg(Employee.salary))
-            .filter(Employee.job_title == job_title)
+            .filter(func.lower(Employee.job_title) == search_term)
             .scalar()
         )
