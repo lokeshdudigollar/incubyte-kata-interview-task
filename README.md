@@ -1,4 +1,4 @@
-# Incubyte Salary Management Kata
+# Salary Management Kata
 
 This project is a RESTful API for managing employee data and performing salary-related operations. It supports employee CRUD operations, salary calculation based on country-specific rules, and salary metrics aggregation.
 
